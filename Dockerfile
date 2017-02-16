@@ -1,2 +1,4 @@
-FROM golang:1.6-onbuild
+FROM scratch
+ADD server /
+ENTRYPOINT ["/server"]
 EXPOSE 8080
