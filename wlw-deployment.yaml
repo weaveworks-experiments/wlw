@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: wlw-deployment
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: wlw
+    spec:
+      containers:
+      - name: wlw
+        image: lmarsden/wlw:v0.1

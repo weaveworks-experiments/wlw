@@ -8,7 +8,7 @@ import (
 
 func main() {
 	req := func() {
-		_, err := http.Get("http://localhost:8080/")
+		_, err := http.Get("http://localhost:30003/")
 		if err != nil {
 			log.Fatal(err)
 		}
