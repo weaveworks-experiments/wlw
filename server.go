@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -16,12 +18,12 @@ var (
 		},
 		[]string{"code", "method"},
 	)
-	requestProcessingTimes = prometheus.NewHistogram(
+	requestProcessingTimes = prometheus.NewHistogramVec(
 		prometheus.HistogramOpts{
 			Name: "who_lives_where_processing_time",
 			Help: "Processing time latencies for the who_lives_where service.",
-			// 0.001 seconds = 1 millisecond, up to 10 seconds
-			Buckets: prometheus.LinearBuckets(0.001, 0.001, 10000),
+			// 0.1 seconds = 100 millisecond, up to 10 seconds
+			Buckets: prometheus.LinearBuckets(0.1, 0.1, 100),
 		},
 		[]string{"who"},
 	)
@@ -44,7 +46,7 @@ func main() {
 		`)
 	})
 	http.HandleFunc("/person", func(w http.ResponseWriter, r *http.Request) {
-		startTime = time.Now().UnixNano()
+		startTime := time.Now().UnixNano()
 		person := r.URL.Query()["who"][0]
 		responseCode := "200"
 		if person == "anita" {
@@ -53,26 +55,22 @@ func main() {
 			fmt.Fprintf(w, "Tamao lives in California")
 		} else if person == "ilya" {
 			time.Sleep(1 * time.Second)
-			fmt.Fprintf("Ilya lives in London")
+			fmt.Fprintf(w, "Ilya lives in London")
 		} else {
 			fmt.Fprintf(w, "Person not found, error!")
 			responseCode = "404"
 			w.WriteHeader(http.StatusNotFound)
 		}
-		timeNanoseconds = time.Now().UnixNano() - startTime
-		requestTotals.WithLabelValues(responseCode, request.Method).Inc()
+		timeNanoseconds := time.Now().UnixNano() - startTime
+		requestTotals.WithLabelValues(responseCode, r.Method).Inc()
 		requestProcessingTimes.WithLabelValues(person).Observe(
-			//                          nano   micro  milli
+			//                          micro  milli  seconds
 			float64(timeNanoseconds) / (1000 * 1000 * 1000),
 		)
 	})
 
-	prometheus.MustRegister(requestLatencies)
+	prometheus.MustRegister(requestTotals)
 	prometheus.MustRegister(requestProcessingTimes)
-
-	go func() {
-		http.ListenAndServe(":8000", nil)
-	}()
 
 	http.Handle("/metrics", promhttp.Handler())
 	log.Fatal(http.ListenAndServe(":8080", nil))
