@@ -31,6 +31,7 @@ var (
 
 func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		startTime := time.Now().UnixNano()
 		fmt.Fprintf(w, `
 		<html><head><title>Who lives where?</title></head>
 		<body>
@@ -44,6 +45,12 @@ func main() {
 		</body>
 		</html>
 		`)
+		timeNanoseconds := time.Now().UnixNano() - startTime
+		requestTotals.WithLabelValues(responseCode, r.Method).Inc()
+		requestProcessingTimes.WithLabelValues("home").Observe(
+			//                          micro  milli  seconds
+			float64(timeNanoseconds) / (1000 * 1000 * 1000),
+		)
 	})
 	http.HandleFunc("/person", func(w http.ResponseWriter, r *http.Request) {
 		startTime := time.Now().UnixNano()
