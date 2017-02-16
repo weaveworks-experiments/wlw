@@ -1,4 +1,4 @@
-package query
+package main
 
 import (
 	"log"
@@ -8,7 +8,7 @@ import (
 
 func main() {
 	req := func() {
-		_, err := http.Get("http://localhost/")
+		_, err := http.Get("http://localhost:8080/")
 		if err != nil {
 			log.Fatal(err)
 		}

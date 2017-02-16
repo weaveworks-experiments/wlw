@@ -46,7 +46,7 @@ func main() {
 		</html>
 		`)
 		timeNanoseconds := time.Now().UnixNano() - startTime
-		requestTotals.WithLabelValues(responseCode, r.Method).Inc()
+		requestTotals.WithLabelValues("200", r.Method).Inc()
 		requestProcessingTimes.WithLabelValues("home").Observe(
 			//                          micro  milli  seconds
 			float64(timeNanoseconds) / (1000 * 1000 * 1000),
