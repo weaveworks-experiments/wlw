@@ -61,7 +61,6 @@ func main() {
 		} else if person == "tamao" {
 			fmt.Fprintf(w, "Tamao lives in California")
 		} else if person == "ilya" {
-			time.Sleep(1 * time.Second)
 			fmt.Fprintf(w, "Ilya lives in London")
 		} else {
 			fmt.Fprintf(w, "Person not found, error!")
