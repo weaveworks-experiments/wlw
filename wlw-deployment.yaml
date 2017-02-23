@@ -11,4 +11,4 @@ spec:
     spec:
       containers:
       - name: wlw
-        image: lmarsden/wlw:v0.1
+        image: lmarsden/wlw:faster
