@@ -16,15 +16,15 @@ func main() {
 	}
 	// make some requests with a spike
 	// aim to simulate (ish) 1, 2, 3, 13, 23, 33, 34, 35, 36
-	for i := 0; i < 6; i++ {
+	for i := 0; i < 6*5; i++ {
 		req()
 		time.Sleep(1 * time.Second)
 	}
-	for i := 0; i < 30; i++ {
+	for i := 0; i < 30*5; i++ {
 		req()
 		time.Sleep(100 * time.Millisecond)
 	}
-	for i := 0; i < 6; i++ {
+	for i := 0; i < 6*5; i++ {
 		req()
 		time.Sleep(1 * time.Second)
 	}
